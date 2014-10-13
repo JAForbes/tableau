@@ -6,24 +6,31 @@ tableau = (function(){
 
   function createElement(collection){
     tableEl = document.createElement('table');
-    tableEl.onkeydown = function(e){
-      var ENTER = 13;
-      var TAB = 9;
-      if(e.which == ENTER) e.preventDefault()
-      if(e.which == ENTER || e.which == TAB) {
+    tableEl.onkeydown = keydown;
 
-        var srcEl = e.srcElement;
-        if(srcEl.tagName == 'TD'){
-          var key = headers[srcEl.cellIndex];
-          var rowI = srcEl.parentElement.rowIndex;
-          var model = collection[rowI];
-          var val = srcEl.innerText;
+  }
 
-          if(model[key] != val){
-            callbacks['edited'](val,key,rowI,model)
-          }
-        }
+  function keydown(e){
+    var ENTER = 13;
+    var TAB = 9;
+    if(e.which == ENTER) e.preventDefault()
+    if(e.which == ENTER || e.which == TAB) {
+
+      var srcEl = e.srcElement;
+      if(srcEl.tagName == 'TD'){
+        edited(srcEl)
       }
+    }
+  }
+
+  function edited(srcEl){
+    var key = headers[srcEl.cellIndex];
+    var rowI = srcEl.parentElement.rowIndex-1;
+    var model = collection[rowI];
+    var val = srcEl.innerText;
+
+    if(model[key] != val){
+      callbacks['edited'](val,key,rowI,model)
     }
   }
 
@@ -35,7 +42,7 @@ tableau = (function(){
   }
 
   function promise(){
-    return {when: when, el: tableEl}
+    return {when: when, el: tableEl, update:update}
   }
 
   function update(){
