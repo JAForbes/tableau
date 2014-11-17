@@ -1,0 +1,19 @@
+{
+  "name": "tableau",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tableau.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JAForbes/tableau.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JAForbes/tableau/issues"
+  },
+  "homepage": "https://github.com/JAForbes/tableau"
+}

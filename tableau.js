@@ -4,6 +4,13 @@ tableau = (function(){
   var headers;
   var tableEl;
 
+  function tableau(collection){
+    headers = Object.keys(flattenObject(collection[0]))
+    createElement(collection)
+    update()
+    return promise();
+  }
+
   function createElement(collection){
     tableEl = document.createElement('table');
     tableEl.onkeydown = keydown;
@@ -34,13 +41,6 @@ tableau = (function(){
     }
   }
 
-  function tableau(collection){
-    headers = Object.keys(collection[0])
-    createElement(collection)
-    update()
-    return promise();
-  }
-
   function promise(){
     return {when: when, el: tableEl, update:update}
   }
@@ -69,7 +69,7 @@ tableau = (function(){
 
   function values(model){
     return headers.map(function(key){
-      return model[key]
+      return R.path(key,model)
     })
   }
 
@@ -92,6 +92,40 @@ tableau = (function(){
     return promise();
   }
 
+  function flattenObject(ob) {
+  	var toReturn = {};
+
+  	for (var i in ob) {
+  		if (!ob.hasOwnProperty(i)) continue;
+
+  		if ((typeof ob[i]) == 'object' && !Array.isArray(ob[i])) {
+  			var flatObject = flattenObject(ob[i]);
+  			for (var x in flatObject) {
+  				if (!flatObject.hasOwnProperty(x)) continue;
+
+  				toReturn[i + '.' + x] = flatObject[x];
+  			}
+  		} else {
+  			toReturn[i] = ob[i];
+  		}
+  	}
+  	return toReturn;
+  };
+
   return tableau;
 
 })()
+
+tableau.pathSet = function(path,object,value){
+  pathParts = path.split('.')
+  var parent = object;
+  var address;
+  while(pathParts.length>1){
+    address = pathParts.shift()
+    parent[address] = parent[address] || {}
+    parent = parent[address]
+  }
+  address = pathParts.shift()
+  parent[address] = value;
+  return object;
+}
